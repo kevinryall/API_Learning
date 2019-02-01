@@ -1,0 +1,134 @@
+openapi: 3.0.0
+info:
+  description: This is a simple API for running a cheese shop
+  version: "1.0.0-oas3"
+  title: Cheese Shop API
+  contact:
+    email: kevin.ryall@estafet.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: admins
+    description: Secured Admin-only calls
+  - name: developers
+    description: Operations available to regular developers
+paths:
+  /cheese:
+    get:
+      tags:
+        - developers
+      summary: gets cheeses
+      operationId: getAllCheeses
+      description: |
+        Retrieve the cheeses
+      responses:
+        '200':
+          description: available cheeses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cheese'
+    post:
+      tags:
+        - admins
+      summary: adds a cheese
+      operationId: addCheese
+      description: Adds a cheese to the system
+      responses:
+        '201':
+          description: type created
+        '400':
+          description: 'invalid input, object invalid'
+        '409':
+          description: an existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cheese'
+        description: cheese to add
+    put:
+      tags:
+        - admins
+      summary: Update an existing cheese
+      description: amend an existing cheese element
+      operationId: updateCheese
+      responses:
+        '200':
+          description: Operation successful
+        '400':
+          description: Invalid object supplied
+        '404':
+          description: Cheese not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cheese'
+        description: Cheese object that needs to be added to the store
+        required: true
+  '/cheese/{name}':
+    get:
+      tags:
+        - developers
+      summary: Find cheese by name
+      description: Returns a single cheese
+      operationId: getCheeseByName
+      parameters:
+        - name: name
+          in: path
+          description: name of cheese to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cheese'
+        '400':
+          description: Invalid name supplied
+        '404':
+          description: Cheese not found
+    delete:
+      tags:
+        - admins
+      summary: Deletes a cheese
+      description: ''
+      operationId: deleteCheese
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid cheese name
+servers:
+  - url: 'https://virtserver.swaggerhub.com/kevinryall/Cheese_Shop/1.0.0'
+components:
+  schemas:
+    Cheese:
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: Cheddar
+        country:
+          type: string
+          example: Great Britain
+        region:
+          type: string
+          example: Somerset
+        category:
+          type: string
+          example: Cow
